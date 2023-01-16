@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 
 public class DocumentDto {
     @JsonProperty("address_name")
-    private String AddressName;
+    private String storeAddress;
 
     @JsonProperty("y")
     private Double latitude;
