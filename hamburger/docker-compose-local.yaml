@@ -1,0 +1,24 @@
+version: "3.8"
+services:
+  fastfood-recommendation-redis:
+    container_name: fastfood-recommendation-redis
+    build:
+      dockerfile: Dockerfile
+      context: ./redis
+    image: ystc1247/fastfood-recommendation-redis
+    ports:
+      - "6379:6379"
+
+  fastfood-recommendation-database:
+    container_name: fastfood-recommendation-database
+    build:
+      dockerfile: Dockerfile
+      context: ./database
+    image: ystc1247/fastfood-recommendation-database
+    environment:
+      - MARIADB_DATABASE=fastfood-recommendation
+      - MARIADB_ROOT_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+    volumes:
+      - ./database/config:/etc/mysql/conf.d
+    ports:
+      - "3306:3306"
