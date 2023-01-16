@@ -1,0 +1,4 @@
+FROM mariadb:10
+
+ENV TZ=ASIA/SEOUL
+
