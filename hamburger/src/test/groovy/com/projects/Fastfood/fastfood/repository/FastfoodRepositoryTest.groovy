@@ -70,7 +70,11 @@ class FastfoodRepositoryTest extends AbstractIntegrationContainerBaseTest {
                 .build()
 
         when:
+        fastfoodRepository.save(fastfood)
+        def result = fastfoodRepository.findAll()
 
         then:
+        result.get(0).getCreatedDate().isAfter(now)
+        result.get(0).getModifiedDate().isAfter(now)
     }
 }
