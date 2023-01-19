@@ -1,4 +1,4 @@
-package com.projects.hamburger.config;
+package com.projects.Fastfood.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
