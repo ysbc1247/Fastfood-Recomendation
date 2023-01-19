@@ -1,7 +1,6 @@
-package com.projects.hamburger.api.service
+package com.projects.Fastfood.api.service
 import com.projects.AbstractIntegrationContainerBaseTest
 import org.springframework.beans.factory.annotation.Autowired
-import spock.lang.Specification
 
 class KakaoAddressSearchServiceTest extends AbstractIntegrationContainerBaseTest {
     @Autowired
