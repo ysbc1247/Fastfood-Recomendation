@@ -1,4 +1,4 @@
-package com.projects.hamburger.api.dto;
+package com.projects.Fastfood.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
