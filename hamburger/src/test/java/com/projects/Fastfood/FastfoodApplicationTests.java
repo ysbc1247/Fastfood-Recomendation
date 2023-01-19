@@ -1,4 +1,4 @@
-package com.projects.hamburger;
+package com.projects.Fastfood;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
