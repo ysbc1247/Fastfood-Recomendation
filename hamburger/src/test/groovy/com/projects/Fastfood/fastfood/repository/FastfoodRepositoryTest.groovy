@@ -1,18 +1,20 @@
-package com.projects.hamburger.fastfood.repository
+package com.projects.Fastfood.fastfood.repository
 
 import com.projects.AbstractIntegrationContainerBaseTest
-import com.projects.hamburger.fastfood.entity.Fastfood
+import com.projects.Fastfood.fastfood.entity.Fastfood
 import org.springframework.beans.factory.annotation.Autowired
+
+import java.time.LocalDateTime
 
 class FastfoodRepositoryTest extends AbstractIntegrationContainerBaseTest {
     @Autowired
     private FastfoodRepository fastfoodRepository;
 
-    def setup(){
+    def setup() {
         fastfoodRepository.deleteAll()
     }
 
-    def "FastfoodRepository Save"(){
+    def "FastfoodRepository Save"() {
         given:
         String address = "서울 특별시 성북구 종암동"
         String name = "은혜 약국"
@@ -36,7 +38,7 @@ class FastfoodRepositoryTest extends AbstractIntegrationContainerBaseTest {
         result.getLongitude() == longitude
     }
 
-    def "FastfoodRepository SaveAll"(){
+    def "FastfoodRepository SaveAll"() {
         given:
         String address = "서울 특별시 성북구 종암동"
         String name = "은혜 약국"
@@ -55,5 +57,20 @@ class FastfoodRepositoryTest extends AbstractIntegrationContainerBaseTest {
 
         then:
         result.size() == 1
+    }
+
+    def "test for BaseTimeEntity"() {
+        given:
+        LocalDateTime now = LocalDateTime.now()
+        String address = "서울특별시 성북구 종암동"
+        String name = "은혜 약국"
+        def fastfood = Fastfood.builder()
+                .storeAddress(address)
+                .storeName(name)
+                .build()
+
+        when:
+
+        then:
     }
 }
