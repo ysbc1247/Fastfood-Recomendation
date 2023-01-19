@@ -1,5 +1,6 @@
-package com.projects.hamburger.fastfood.entity;
+package com.projects.Fastfood.fastfood.entity;
 
+import com.projects.Fastfood.BaseTimeEntity;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -13,7 +14,7 @@ import javax.persistence.Id;
 @NoArgsConstructor
 @AllArgsConstructor
 
-public class Fastfood {
+public class Fastfood extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,4 +24,9 @@ public class Fastfood {
     private String storeAddress;
     private double latitude;
     private double longitude;
+
+    public void changeStoreAddress(String address){
+        this.storeAddress = address;
+
+    }
 }
