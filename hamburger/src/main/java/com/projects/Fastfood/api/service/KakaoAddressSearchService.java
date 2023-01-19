@@ -1,6 +1,6 @@
-package com.projects.hamburger.api.service;
+package com.projects.Fastfood.api.service;
 
-import com.projects.hamburger.api.dto.KakaoAPIResponseDto;
+import com.projects.Fastfood.api.dto.KakaoAPIResponseDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
