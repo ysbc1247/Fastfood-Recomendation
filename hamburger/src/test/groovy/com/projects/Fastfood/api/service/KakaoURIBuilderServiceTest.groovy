@@ -1,4 +1,4 @@
-package com.projects.hamburger.api.service
+package com.projects.Fastfood.api.service
 
 import spock.lang.Specification
 
