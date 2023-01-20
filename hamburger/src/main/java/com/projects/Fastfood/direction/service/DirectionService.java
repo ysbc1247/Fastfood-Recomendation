@@ -17,7 +17,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-
 public class DirectionService {
 
     private static final int MAX_SEARCH_COUNT = 3;
