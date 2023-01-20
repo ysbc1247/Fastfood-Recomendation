@@ -2,11 +2,14 @@ package com.projects.Fastfood.direction.service;
 
 import com.projects.Fastfood.api.dto.DocumentDto;
 import com.projects.Fastfood.direction.entity.Direction;
+import com.projects.Fastfood.direction.repository.DirectionRepository;
 import com.projects.Fastfood.fastfood.dto.FastfoodDto;
 import com.projects.Fastfood.fastfood.service.FastfoodSearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -22,7 +25,12 @@ public class DirectionService {
     private static final int MAX_SEARCH_COUNT = 3;
     private static final double RADIUS_KM = 10.0;
     private final FastfoodSearchService fastfoodSearchService;
-
+    private final DirectionRepository directionRepository;
+    @Transactional
+    public List<Direction> saveAll(List<Direction> directionList){
+        if(CollectionUtils.isEmpty(directionList)) return Collections.emptyList();
+        return directionRepository.saveAll(directionList);
+    }
     public List<Direction> buildDirectionList(DocumentDto documentDto){
         if(Objects.isNull(documentDto)) return Collections.emptyList();
         return fastfoodSearchService.searchFastfoodDtoList()
