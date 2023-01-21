@@ -1,15 +1,16 @@
 package com.projects.Fastfood.direction.service;
 
 import com.projects.Fastfood.api.dto.DocumentDto;
+import com.projects.Fastfood.api.service.KakaoCategorySearchService;
 import com.projects.Fastfood.direction.entity.Direction;
 import com.projects.Fastfood.direction.repository.DirectionRepository;
-import com.projects.Fastfood.fastfood.dto.FastfoodDto;
 import com.projects.Fastfood.fastfood.service.FastfoodSearchService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Collections;
 import java.util.Comparator;
@@ -22,36 +23,81 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class DirectionService {
 
-    private static final int MAX_SEARCH_COUNT = 3;
-    private static final double RADIUS_KM = 10.0;
+    private static final int MAX_SEARCH_COUNT = 3; // 최대 검색 갯수
+    private static final double RADIUS_KM = 10.0; // 반경 10 km
+    private static final String DIRECTION_BASE_URL = "https://map.kakao.com/link/map/";
+
     private final FastfoodSearchService fastfoodSearchService;
     private final DirectionRepository directionRepository;
+    private final Base62Service base62Service;
+
+    private final KakaoCategorySearchService kakaoCategorySearchService;
+
     @Transactional
-    public List<Direction> saveAll(List<Direction> directionList){
-        if(CollectionUtils.isEmpty(directionList)) return Collections.emptyList();
+    public List<Direction> saveAll(List<Direction> directionList) {
+        if (CollectionUtils.isEmpty(directionList)) return Collections.emptyList();
         return directionRepository.saveAll(directionList);
     }
-    public List<Direction> buildDirectionList(DocumentDto documentDto){
+
+    @Transactional(readOnly = true)
+    public String findDirectionUrlById(String encodedId) {
+
+        Long decodedId = base62Service.decodeDirectionId(encodedId);
+        Direction direction = directionRepository.findById(decodedId).orElse(null);
+
+        String params = String.join(",", direction.getTargetStoreName(),
+                String.valueOf(direction.getTargetLatitude()), String.valueOf(direction.getTargetLongitude()));
+        String result = UriComponentsBuilder.fromHttpUrl(DIRECTION_BASE_URL + params)
+                .toUriString();
+
+        return result;
+    }
+
+    public List<Direction> buildDirectionList(DocumentDto documentDto) {
         if(Objects.isNull(documentDto)) return Collections.emptyList();
+
         return fastfoodSearchService.searchFastfoodDtoList()
                 .stream().map(fastfoodDto ->
-                    Direction.builder()
-                            .inputAddress(documentDto.getStoreAddress())
-                            .inputLatitude(documentDto.getLatitude())
-                            .inputLongitude(documentDto.getLongitude())
-                            .targetLongitude(fastfoodDto.getLongitude())
-                            .targetLatitude(fastfoodDto.getLatitude())
-                            .targetStoreName(fastfoodDto.getStoreName())
-                            .targetAddress(fastfoodDto.getStoreAddress())
-                            .distance(
-                                    calculateDistance(documentDto.getLatitude(), documentDto.getLongitude(), fastfoodDto.getLatitude(), fastfoodDto.getLongitude())
-                            )
-                            .build())
+                        Direction.builder()
+                                .inputAddress(documentDto.getStoreAddress())
+                                .inputLatitude(documentDto.getLatitude())
+                                .inputLongitude(documentDto.getLongitude())
+                                .targetStoreName(fastfoodDto.getStoreName())
+                                .targetAddress(fastfoodDto.getStoreAddress())
+                                .targetLatitude(fastfoodDto.getLatitude())
+                                .targetLongitude(fastfoodDto.getLongitude())
+                                .distance(
+                                        calculateDistance(documentDto.getLatitude(), documentDto.getLongitude(),
+                                                fastfoodDto.getLatitude(), fastfoodDto.getLongitude()))
+                                .build())
                 .filter(direction -> direction.getDistance() <= RADIUS_KM)
                 .sorted(Comparator.comparing(Direction::getDistance))
                 .limit(MAX_SEARCH_COUNT)
                 .collect(Collectors.toList());
     }
+
+    // pharmacy search by category kakao api
+    public List<Direction> buildDirectionListByCategoryApi(DocumentDto inputDocumentDto) {
+        if(Objects.isNull(inputDocumentDto)) return Collections.emptyList();
+
+        return kakaoCategorySearchService
+                .requestPharmacyCategorySearch(inputDocumentDto.getLatitude(), inputDocumentDto.getLongitude(), RADIUS_KM)
+                .getDocumentList()
+                .stream().map(resultDocumentDto ->
+                        Direction.builder()
+                                .inputAddress(inputDocumentDto.getStoreAddress())
+                                .inputLatitude(inputDocumentDto.getLatitude())
+                                .inputLongitude(inputDocumentDto.getLongitude())
+                                .targetStoreName(resultDocumentDto.getPlaceName())
+                                .targetAddress(resultDocumentDto.getStoreAddress())
+                                .targetLatitude(resultDocumentDto.getLatitude())
+                                .targetLongitude(resultDocumentDto.getLongitude())
+                                .distance(resultDocumentDto.getDistance() * 0.001) // km 단위
+                                .build())
+                .limit(MAX_SEARCH_COUNT)
+                .collect(Collectors.toList());
+    }
+
     // Haversine formula
     private double calculateDistance(double lat1, double lon1, double lat2, double lon2) {
         lat1 = Math.toRadians(lat1);
