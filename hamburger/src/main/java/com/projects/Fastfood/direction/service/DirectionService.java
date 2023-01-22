@@ -39,6 +39,18 @@ public class DirectionService {
         return directionRepository.saveAll(directionList);
     }
 
+    public String findDirectionById(String encodedId){
+        Long decodedId = base62Service.decodeDirectionId(encodedId);
+        Direction direction = directionRepository.findById(decodedId).orElse(null);
+        String params = String.join(",",direction.getTargetStoreName(),
+                String.valueOf(direction.getTargetLatitude()), String.valueOf(direction.getTargetLongitude()));
+
+        String result = UriComponentsBuilder.fromHttpUrl(DIRECTION_BASE_URL + params)
+                .toUriString();
+
+        return result;
+
+    }
     @Transactional(readOnly = true)
     public String findDirectionUrlById(String encodedId) {
 
