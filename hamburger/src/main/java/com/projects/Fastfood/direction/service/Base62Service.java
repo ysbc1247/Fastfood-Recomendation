@@ -1,5 +1,6 @@
 package com.projects.Fastfood.direction.service;
 
+import io.seruco.encoding.base62.Base62;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
