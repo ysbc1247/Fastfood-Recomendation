@@ -11,3 +11,8 @@ kakao:
   rest:
     api:
       key: ${KAKAO_REST_API_KEY}
+
+fastfood:
+  recommendation:
+    base:
+      url: http://localhost/dir/
