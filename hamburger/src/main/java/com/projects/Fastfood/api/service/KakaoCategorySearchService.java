@@ -23,14 +23,14 @@ public class KakaoCategorySearchService {
 
     private final RestTemplate restTemplate;
 
-    private static final String PHARMACY_CATEGORY = "PM9";
+    private static final String FASTFOOD_CATEGORY = "PM9";
 
     @Value("${kakao.rest.api.key}")
     private String kakaoRestApiKey;
 
-    public KakaoAPIResponseDto requestPharmacyCategorySearch(double latitude, double longitude, double radius) {
+    public KakaoAPIResponseDto requestFastfoodCategorySearch(double latitude, double longitude, double radius) {
 
-        URI uri = kakaoURIBuilderService.buildUriByCategorySearch(latitude, longitude, radius, PHARMACY_CATEGORY);
+        URI uri = kakaoURIBuilderService.buildUriByCategorySearch(latitude, longitude, radius, FASTFOOD_CATEGORY);
 
         HttpHeaders headers = new HttpHeaders();
         headers.set(HttpHeaders.AUTHORIZATION, "KakaoAK "+ kakaoRestApiKey);
